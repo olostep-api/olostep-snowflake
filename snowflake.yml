@@ -1,0 +1,15 @@
+definition_version: 2
+entities:
+  olostep_pkg:
+    type: application package
+    identifier: olostep_pkg
+    stage: app_src.stage
+    manifest: app/manifest.yml
+    artifacts:
+      - src: app/*
+        dest: ./
+  olostep_app:
+    type: application
+    identifier: olostep_app
+    from:
+      target: olostep_pkg

@@ -1,0 +1,28 @@
+manifest_version: 1
+
+version:
+  name: v1_0
+  label: "1.0"
+  comment: "Olostep web search, scraping and answers for Snowflake"
+
+artifacts:
+  setup_script: setup_script.sql
+  readme: README.md
+
+references:
+  - olostep_api_key:
+      label: "Olostep API key"
+      description: "A GENERIC_STRING secret holding your Olostep API key. Get a key at https://www.olostep.com"
+      privileges:
+        - READ
+      object_type: SECRET
+      register_callback: core.register_reference
+      configuration_callback: core.get_configuration
+  - olostep_external_access:
+      label: "Olostep API access"
+      description: "External access integration that allows calls to api.olostep.com"
+      privileges:
+        - USAGE
+      object_type: EXTERNAL ACCESS INTEGRATION
+      register_callback: core.register_reference
+      configuration_callback: core.get_configuration
