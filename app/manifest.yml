@@ -3,7 +3,7 @@ manifest_version: 1
 version:
   name: v1_0
   label: "1.0"
-  comment: "Olostep web search, scraping and answers for Snowflake"
+  comment: "Olostep web search, scraping, crawling and answers for Snowflake"
 
 artifacts:
   setup_script: setup_script.sql

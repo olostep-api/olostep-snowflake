@@ -2,7 +2,7 @@
 
 [Olostep](https://www.olostep.com) is web data infrastructure for AI. It provides live web search, scraping and crawling API to extract and structure data.
 
-This app lets you search the web, scrape pages into clean markdown, map websites and get answers with sources, directly from Snowflake SQL or as tools for Cortex Agents.
+This app lets you search the web, scrape pages into clean markdown, map websites and get answers with sources, directly from Snowflake SQL or as tools for Cortex Agents. Batch scrapes and website crawls are saved as tables you can query, join and load into Cortex Search.
 
 ## Setup
 
@@ -48,6 +48,32 @@ CALL <APP_NAME>.core.map('https://docs.olostep.com', 50);
 ```
 
 Every procedure returns a `VARIANT`. On failure it returns an object with `status` set to `error`.
+
+## Save pages as tables
+
+`batch_scrape` and `crawl` save one row per page to `<APP_NAME>.results.<table_name>`, with the columns `URL`, `MARKDOWN`, `ERROR` and `RETRIEVED_AT`. Using an existing table name replaces that table.
+
+```sql
+-- Scrape every URL in one of your tables
+CALL <APP_NAME>.core.batch_scrape(
+  (SELECT ARRAY_AGG(url) FROM my_db.my_schema.companies),
+  'company_pages');
+
+-- Crawl a website (up to 25 pages)
+CALL <APP_NAME>.core.crawl('https://docs.olostep.com', 'olostep_docs', 25);
+
+-- Query the results, or copy them into your own database
+SELECT url, markdown FROM <APP_NAME>.results.company_pages;
+CREATE TABLE my_db.my_schema.company_pages AS SELECT * FROM <APP_NAME>.results.company_pages;
+```
+
+Batches and crawls usually finish in a few minutes. If one is still running after 20 minutes, the procedure returns its `id` with `status` set to `in_progress`. Save its pages later with:
+
+```sql
+CALL <APP_NAME>.core.save_results('<id>', 'company_pages');
+```
+
+Tables in `results` are removed if you uninstall the app, so copy anything you want to keep into your own database.
 
 ## Support
 
